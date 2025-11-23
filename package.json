@@ -7,6 +7,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "scrape": "node scraper.js",
+    "railway": "bash start-railway.sh",
     "postinstall": "echo 'Installation complete! Run npm run scrape to populate database.'"
   },
   "keywords": ["real-estate", "commercial", "property", "maps"],
