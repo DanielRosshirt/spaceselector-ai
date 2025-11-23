@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceSelector.ai - Commercial Real Estate Finder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏢 SpaceSelector.ai</h1>
+            <p class="tagline">Find Your Perfect Commercial Space</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar with Search Form -->
+            <aside class="sidebar">
+                <div class="search-panel">
+                    <h2>Filter Properties</h2>
+                    
+                    <form id="searchForm">
+                        <!-- Location -->
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" placeholder="e.g., San Francisco">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" id="state" placeholder="e.g., CA" maxlength="2">
+                        </div>
+
+                        <!-- Property Type -->
+                        <div class="form-group">
+                            <label for="propertyType">Property Type</label>
+                            <select id="propertyType">
+                                <option value="all">All Types</option>
+                                <option value="Office">Office</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Industrial">Industrial</option>
+                                <option value="Mixed Use">Mixed Use</option>
+                                <option value="Medical">Medical</option>
+                                <option value="Restaurant">Restaurant</option>
+                                <option value="Warehouse">Warehouse</option>
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="form-group">
+                            <label>Price Range</label>
+                            <div class="range-inputs">
+                                <input type="number" id="minPrice" placeholder="Min $" step="100000">
+                                <span>to</span>
+                                <input type="number" id="maxPrice" placeholder="Max $" step="100000">
+                            </div>
+                        </div>
+
+                        <!-- Square Footage -->
+                        <div class="form-group">
+                            <label>Square Footage</label>
+                            <div class="range-inputs">
+                                <input type="number" id="minSize" placeholder="Min sq ft" step="1000">
+                                <span>to</span>
+                                <input type="number" id="maxSize" placeholder="Max sq ft" step="1000">
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary">
+                                🔍 Search Properties
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="resetBtn">
+                                Clear Filters
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Results Summary -->
+                    <div class="results-summary" id="resultsSummary">
+                        <p>Loading properties...</p>
+                    </div>
+                </div>
+
+                <!-- Property List -->
+                <div class="property-list" id="propertyList">
+                    <!-- Properties will be dynamically inserted here -->
+                </div>
+            </aside>
+
+            <!-- Map Container -->
+            <main class="map-container">
+                <div id="map"></div>
+                <div class="map-loading" id="mapLoading">
+                    <p>Loading map...</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Property Detail Modal -->
+    <div class="modal" id="propertyModal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div id="modalBody">
+                <!-- Property details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
+
