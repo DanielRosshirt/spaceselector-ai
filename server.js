@@ -8,30 +8,59 @@ const Database = require('better-sqlite3');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize database
-const db = new Database('properties.db');
+console.log('🚀 SpaceSelector.ai Server Starting...');
+console.log('📍 Current directory:', process.cwd());
+console.log('🔑 Environment:', process.env.NODE_ENV);
+console.log('🔑 Google Maps API Key:', process.env.GOOGLE_MAPS_API_KEY ? 'Set ✅' : 'Missing ❌');
 
-// Create tables
-db.exec(`
-  CREATE TABLE IF NOT EXISTS properties (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    address TEXT NOT NULL,
-    city TEXT,
-    state TEXT,
-    zip_code TEXT,
-    latitude REAL,
-    longitude REAL,
-    price REAL,
-    square_feet INTEGER,
-    property_type TEXT,
-    description TEXT,
-    image_url TEXT,
-    source_url TEXT,
-    source_site TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
+// Initialize database
+console.log('📊 Initializing database...');
+let db;
+try {
+  db = new Database('properties.db');
+  console.log('✅ Database opened successfully');
+  
+  // Create tables
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS properties (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      address TEXT NOT NULL,
+      city TEXT,
+      state TEXT,
+      zip_code TEXT,
+      latitude REAL,
+      longitude REAL,
+      price REAL,
+      square_feet INTEGER,
+      property_type TEXT,
+      description TEXT,
+      image_url TEXT,
+      source_url TEXT,
+      source_site TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  console.log('✅ Database tables verified');
+  
+  // Count properties
+  const countStmt = db.prepare('SELECT COUNT(*) as count FROM properties');
+  const result = countStmt.get();
+  console.log(`📊 Database contains ${result.count} properties`);
+  
+  if (result.count > 0) {
+    // Show sample property
+    const sampleStmt = db.prepare('SELECT title, city, state, property_type FROM properties LIMIT 3');
+    const samples = sampleStmt.all();
+    console.log('📍 Sample properties:');
+    samples.forEach(p => console.log(`   - ${p.title} (${p.city}, ${p.state}) - ${p.property_type}`));
+  } else {
+    console.log('⚠️  WARNING: Database is empty! Run scraper.js to populate.');
+  }
+} catch (error) {
+  console.error('❌ Database error:', error);
+  process.exit(1);
+}
 
 // Middleware
 app.use(cors());
@@ -43,6 +72,9 @@ app.use(express.static('public'));
 // Get all properties with optional filters
 app.get('/api/properties', (req, res) => {
   try {
+    console.log('📊 GET /api/properties called');
+    console.log('📍 Query params:', req.query);
+    
     const { 
       minPrice, 
       maxPrice, 
@@ -87,12 +119,20 @@ app.get('/api/properties', (req, res) => {
 
     query += ' ORDER BY created_at DESC';
 
+    console.log('📝 SQL Query:', query);
+    console.log('📝 SQL Params:', params);
+
     const stmt = db.prepare(query);
     const properties = stmt.all(...params);
     
+    console.log(`✅ Found ${properties.length} properties`);
+    if (properties.length > 0) {
+      console.log('📍 First property:', properties[0].title, properties[0].city, properties[0].state);
+    }
+    
     res.json({ success: true, data: properties });
   } catch (error) {
-    console.error('Error fetching properties:', error);
+    console.error('❌ Error fetching properties:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -184,8 +224,10 @@ app.get('*', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`API available at http://localhost:${PORT}/api/properties`);
+  console.log('='.repeat(60));
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`📡 API available at http://localhost:${PORT}/api/properties`);
+  console.log('='.repeat(60));
 });
 
 // Graceful shutdown
